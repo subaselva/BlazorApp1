@@ -1,0 +1,106 @@
+﻿@page "/user-roles"
+@inject HttpClient Http
+
+<div class="role-container">
+    <h3 class="title">User Role Management</h3>
+
+    <!-- Assign User to Role -->
+    <div class="card p-3 mb-3">
+        <h4 class="subtitle">Assign Role to User</h4>
+        <input @bind="assignUserEmail" placeholder="User Email" class="form-control" />
+        <input @bind="assignUserRole" placeholder="Role Name" class="form-control" />
+        <button @onclick="AssignRoleToUser" class="btn btn-primary">Assign Role</button>
+    </div>
+
+    <!-- Remove User from Role -->
+    <div class="card p-3 mb-3">
+        <h4 class="subtitle">Remove Role from User</h4>
+        <input @bind="removeUserEmail" placeholder="User Email" class="form-control" />
+        <input @bind="removeUserRole" placeholder="Role Name" class="form-control" />
+        <button @onclick="RemoveRoleFromUser" class="btn btn-primary">Remove Role</button>
+    </div>
+
+    <!-- Show User Roles -->
+    <div class="card p-3">
+        <h4 class="subtitle">View Roles of a User</h4>
+        <input @bind="viewUserEmail" placeholder="User Email" class="form-control" />
+        <button @onclick="GetUserRoles" class="btn btn-primary">Show Roles</button>
+
+        <div class="mt-3">
+            <h5 class="subtitle">Roles Assigned:</h5>
+            <ul class="role-list">
+                @if (userRoles != null && userRoles.Count > 0)
+                {
+                    foreach (var role in userRoles)
+                    {
+                        <li class="role-item">@role</li>
+                    }
+                }
+                else
+                {
+                    <li class="role-item">No roles found for this user.</li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <!-- Status Message -->
+    <div class="alert mt-3" role="alert" style="display: @(string.IsNullOrEmpty(statusMessage) ? "none" : "block");">
+        @statusMessage
+    </div>
+</div>
+
+@code {
+    private string assignUserEmail;
+    private string assignUserRole;
+    private string removeUserEmail;
+    private string removeUserRole;
+    private string viewUserEmail;
+    private List<string> userRoles;
+    private string statusMessage;
+
+    private async Task AssignRoleToUser()
+    {
+        var response = await Http.PostAsJsonAsync($"api/Role/AddUserToRole?email={assignUserEmail}&roleName={assignUserRole}", "");
+        if (response.IsSuccessStatusCode)
+        {
+            statusMessage = "Role assigned to user successfully!";
+            assignUserEmail = string.Empty;
+            assignUserRole = string.Empty;
+        }
+        else
+        {
+            statusMessage = "Failed to assign role to user.";
+        }
+    }
+
+    private async Task RemoveRoleFromUser()
+    {
+        var response = await Http.PostAsJsonAsync($"api/Role/RemoveUserFromRole?email={removeUserEmail}&roleName={removeUserRole}", "");
+        if (response.IsSuccessStatusCode)
+        {
+            statusMessage = "Role removed from user successfully!";
+            removeUserEmail = string.Empty;
+            removeUserRole = string.Empty;
+        }
+        else
+        {
+            statusMessage = "Failed to remove role from user.";
+        }
+    }
+
+    private async Task GetUserRoles()
+    {
+        var response = await Http.GetAsync($"api/Role/GetUserRoles?email={viewUserEmail}");
+        if (response.IsSuccessStatusCode)
+        {
+            userRoles = await response.Content.ReadFromJsonAsync<List<string>>();
+            statusMessage = "User roles retrieved successfully.";
+        }
+        else
+        {
+            statusMessage = "Failed to fetch roles for user.";
+            userRoles = new List<string>();
+        }
+    }
+}

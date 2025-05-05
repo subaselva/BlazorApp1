@@ -1,0 +1,86 @@
+﻿@page "/student-profile-list"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<h3 class="mt-3">Student Profiles</h3>
+
+@if (profiles == null)
+{
+    <p>Loading...</p>
+}
+else if (!profiles.Any())
+{
+    <p>No student profiles available.</p>
+}
+else
+{
+    <table class="table table-custom table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Student ID</th>
+                <th>Facilities</th>
+                <th>Is CWSN</th>
+                <th>Is SLD</th>
+                <th>SLD Type</th>
+                <th>Is ASD</th>
+                <th>Is ADHD</th>
+                <th>Is Gifted</th>
+                <th>In State Competition</th>
+                <th>NCC/NSS</th>
+                <th>Internet Use</th>
+                <th>Height</th>
+                <th>Weight</th>
+                <th>Residency</th>
+                <th>Parent Education</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in profiles)
+            {
+                <tr>
+                    <td>@p.StudentName</td>
+                    <td>@p.StudentId</td>
+                    <td>@p.FacilitiesProvided</td>
+                    <td>@p.IsCWSN</td>
+                    <td>@p.IsSLD</td>
+                    <td>@p.SLDType</td>
+                    <td>@p.IsASD</td>
+                    <td>@p.IsADHD</td>
+                    <td>@p.IsGifted</td>
+                    <td>@p.IsInStateCompetition</td>
+                    <td>@p.IsInNCC_NSS</td>
+                    <td>@p.IsInUseInternet</td>
+                    <td>@p.Height</td>
+                    <td>@p.Weight</td>
+                    <td>@p.Residencetoschool</td>
+                    <td>@p.Educationinfamily</td>
+                    <td style="white-space:nowrap">
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-info btn-sm" @onclick="() => ViewProfile(p.Id)">View</button>
+                        <button class="btn btn-primary btn-sm" @onclick="() => EditProfile(p.Id)">Edit</button>
+                        
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<StudentProfile>? profiles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        profiles = await Http.GetFromJsonAsync<List<StudentProfile>>("api/StudentProfile/all");
+    }
+
+    void ViewProfile(int id) => Navigation.NavigateTo($"/another-profile-view/{id}");
+    void EditProfile(int id) => Navigation.NavigateTo($"/student-profile-view/{id}");
+
+   
+
+    
+}

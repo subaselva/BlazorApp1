@@ -1,0 +1,108 @@
+﻿@page "/another-profile-view/{Id:int}"
+@using BlazorApp1.Model
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<h3>Another Profile Details</h3>
+
+@if (StudentProfile == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h5><b>Profile Details</b></h5>
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">1</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Whether Facilities Provided to the Student(for the year of filling data)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.FacilitiesProvided ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">2</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Facilities provided to Student in case of CWSN(for the year of filling data)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.IsCWSN ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">3</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Whether Student has been screened for specific Learning Disability(SLD)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.IsSLD ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">4</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>SLD Type</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.SLDType ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">5</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Whether Student has been screened for Autism Spectrum Disorder(ASD)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.IsASD ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">6</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Whether Student has been screened for Attention Deficit Hyperactive Disorder(ADHD)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.IsADHD ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">7</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Has the Student been Identified as a Gifted/Talented</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.IsGifted ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">8</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Does the student appeared in any State Level Competitions/National Level Competitions/Olympiads?</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.IsInStateCompetition ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">9</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Does the Student Participate in NCC/NSS/Scouts and Guides? </b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.IsInNCC_NSS ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">10</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Whether student is capable of handling digital devices including the internet?</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.IsInUseInternet ?? "N/A")</td>
+            </tr>
+
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">11</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Student's Height(in CMs)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.Height ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">12</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Student's Weight (in KGs)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.Weight ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">13</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Approximate Distance of student's residence to school</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.Residencetoschool ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">14</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Completed Highest Education Level of Mother/Father/Legal Guardian</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(StudentProfile.Educationinfamily ?? "N/A")</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="btn btn-secondary" @onclick="GoBack">Back to List</button>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    StudentProfile? StudentProfile;
+
+    protected override async Task OnInitializedAsync()
+    {
+        StudentProfile = await Http.GetFromJsonAsync<StudentProfile>($"api/StudentProfile/get/{Id}");
+    }
+
+    void GoBack()
+    {
+        Navigation.NavigateTo("/student-profile-list");
+    }
+}

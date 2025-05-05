@@ -1,0 +1,135 @@
+﻿@page "/student-enrollment-edit/{Id:int}"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@using BlazorApp1.Model
+@using System.Net.Http.Json
+
+<h3>Edit Enrollment Details</h3>
+
+@if (enrollmentDetail == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="enrollmentDetail" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="card p-4 mb-4 shadow-sm rounded-2xl">
+            <h4 class="mb-4">Enrollment Details</h4>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="AdmissionNumber">1. Admission Number</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.AdmissionNumber)" />
+                    <InputNumber id="AdmissionNumber" class="form-control " @bind-Value="enrollmentDetail.AdmissionNumber" placeholder="1) Admission Number" />
+                </div>
+                <div class="col-md-3">
+                    <label for="AdmissionDate">2. Admission Date</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.AdmissionDate)" />
+                    <InputDate class="form-control " id="AdmissionDate" @bind-Value="enrollmentDetail.AdmissionDate" placeholder="2) Select Admission Date" />
+                </div>
+                <div class="col-md-3">
+                    <label for="ClassRollNo">3. Class Roll Number</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.ClassRollNo)" />
+                    <InputNumber class="form-control " id="ClassRollNo" @bind-Value="enrollmentDetail.ClassRollNo" placeholder="3) Class Roll Number" />
+                </div>
+                <div class="col-md-3">
+                    <label for="MediumOfInstruction">4. Medium Of Instruction</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.MediumOfInstruction)" />
+                    <InputText class="form-control " id="MediumOfInstruction" @bind-Value="enrollmentDetail.MediumOfInstruction" placeholder="4) Medium Of Instruction" />
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="LanguagesGroupStudied">5. Languages Group Studied</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.LanguagesGroupStudied)" />
+                    <InputText class="form-control " id="LanguagesGroupStudied" @bind-Value="enrollmentDetail.LanguagesGroupStudied" placeholder="5) Languages Group Studied" />
+                </div>
+                <div class="col-md-3">
+                    <label for="AcademicGroupStudied">6. Academic Group Studied</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.AcademicGroupStudied)" />
+                    <InputText class="form-control " id="AcademicGroupStudied" @bind-Value="enrollmentDetail.AcademicGroupStudied" placeholder="6) Academic Group Studied" />
+                </div>
+                <div class="col-md-3">
+                    <label for="SubjectsGroupStudied">7. Subjects Group Studied</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.SubjectsGroupStudied)" />
+                    <InputText class="form-control" id="SubjectsGroupStudied" @bind-Value="enrollmentDetail.SubjectsGroupStudied" placeholder="7) Subjects Group Studied" />
+                </div>
+                <div class="col-md-3">
+                    <label for="PreviousAcademicYear">8. Previous Academic Year</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.PreviousAcademicYear)" />
+                    <InputText class="form-control " id="PreviousAcademicYear" @bind-Value="enrollmentDetail.PreviousAcademicYear" placeholder="8) Previous Academic Year" />
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="StatusPreviousYear">9. Status Previous Year</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.StatusPreviousYear)" />
+                    <InputText class="form-control " id="StatusPreviousYear" @bind-Value="enrollmentDetail.StatusPreviousYear" placeholder="9) Status Previous Year" />
+                </div>
+                <div class="col-md-3">
+                    <label for="Admitted">10. Admitted</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.Admitted)" />
+                    <InputText class="form-control " id="Admitted" @bind-Value="enrollmentDetail.Admitted" placeholder="10) Admitted" />
+                </div>
+                <div class="col-md-3">
+                    <label for="PreviousClass">11. Previous Class</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.PreviousClass)" />
+                    <InputText class="form-control " id="PreviousClass" @bind-Value="enrollmentDetail.PreviousClass" placeholder="11) Previous Class" />
+                </div>
+                <div class="col-md-3">
+                    <label for="Marks">12. Marks</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.Marks)" />
+                    <InputText class="form-control " id="Marks" @bind-Value="enrollmentDetail.Marks" placeholder="12) Marks" />
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="PreviousAttendance">13. Previous Attendance</label>
+                    <ValidationMessage For="@(() => enrollmentDetail.PreviousAttendance)" />
+                    <InputText class="form-control " id="PreviousAttendance" @bind-Value="enrollmentDetail.PreviousAttendance" placeholder="13) Previous Attendance" />
+                </div>
+            </div>
+
+        </div>
+        <button class="btn btn-primary mt-3" type="submit">Update</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private EnrollmentDetail? enrollmentDetail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            enrollmentDetail = await Http.GetFromJsonAsync<EnrollmentDetail>($"api/EnrollmentDetail/get/{Id}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Failed to fetch enrollment data: {ex.Message}");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (enrollmentDetail != null)
+        {
+            var response = await Http.PutAsJsonAsync($"api/EnrollmentDetail/edit/{Id}", enrollmentDetail);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/student-enrollment-list");
+            }
+            else
+            {
+                Console.Error.WriteLine("Failed to update enrollment details.");
+            }
+        }
+    }
+}

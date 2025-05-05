@@ -1,0 +1,183 @@
+﻿@page "/audit-logs"
+@inject HttpClient Http
+@using BlazorApp1.Model
+@inject IJSRuntime JS
+@using System.Text.Json
+
+<h3 class="title">Audit Logs</h3>
+
+@if (auditLogs == null)
+{
+    <div class="alert alert-info text-center">Loading audit logs...</div>
+}
+else if (!auditLogs.Any())
+{
+    <div class="alert alert-warning text-center">No audit logs found.</div>
+}
+else
+{
+    <div class="mb-3 d-flex justify-content-between">
+        <input type="text" class="form-control w-25" @bind="searchTerm" placeholder="Search by user..." />
+
+        <select class="form-select w-25" @bind="selectedAction">
+            <option value="">All Actions</option>
+            <option value="Created">Created</option>
+            <option value="Updated">Updated</option>
+            <option value="Deleted">Deleted</option>
+            <option value="Approved">Approved</option>  <!-- ✅ New -->
+            <option value="Rejected">Rejected</option>  <!-- ✅ New -->
+        </select>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>User Email</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Timestamp</th>
+                    <th>Changes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in FilteredAuditLogs)
+                {
+                    <tr>
+                        <td>@log.Id</td>
+                        <td>@log.UserEmail</td>
+                        <td>
+                            <span class="badge @(GetBadgeClass(log.Action))">
+                                @GetActionIcon(log.Action) @log.Action
+                            </span>
+                        </td>
+                        <td>@log.Entity</td>
+                        <td>@log.Timestamp.ToLocalTime().ToString("dd-MM-yyyy HH:mm:ss")</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(log.Changes))
+                            {
+                                <pre class="small">
+                                    @FormatChanges(log.Changes) 
+                    </pre>
+                            }
+                            else
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<AuditLog>? auditLogs;
+    private string searchTerm = "";
+    private string selectedAction = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Fetch audit logs from API
+            auditLogs = await Http.GetFromJsonAsync<List<AuditLog>>("api/Audit/GetAuditLogs");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching audit logs: {ex.Message}");
+        }
+    }
+
+    // ✅ Fixed Filtering Logic
+    private IEnumerable<AuditLog> FilteredAuditLogs =>
+        auditLogs?
+            .Where(log =>
+                (string.IsNullOrWhiteSpace(searchTerm) || log.UserEmail.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(selectedAction) || log.Action.Equals(selectedAction, StringComparison.OrdinalIgnoreCase))
+            ) ?? new List<AuditLog>();
+
+    // ✅ Updated Badge Colors (Includes Approved & Rejected)
+    private string GetBadgeClass(string action) => action switch
+    {
+        "Created" => "bg-success",
+        "Updated" => "bg-warning text-dark",
+        "Deleted" => "bg-danger",
+        "Approved" => "bg-primary",   // ✅ New
+        "Rejected" => "bg-secondary", // ✅ New
+        _ => "bg-dark"
+    };
+
+    // ✅ Updated Action Icons (Includes Approved & Rejected)
+    private string GetActionIcon(string action) => action switch
+    {
+        "Created" => "🟢",
+        "Updated" => "🟡",
+        "Deleted" => "🔴",
+        "Approved" => "✅",   // ✅ New
+        "Rejected" => "❌",   // ✅ New
+        _ => "⚪"
+    };
+
+    // ✅ Show Changes in a Pop-up
+    private MarkupString FormatChanges(string json)
+    {
+        try
+        {
+            var changesDict = JsonSerializer.Deserialize<Dictionary<string, object>>(json);
+            if (changesDict == null || changesDict.Count == 0)
+                return new MarkupString("<span class='text-muted'>N/A</span>");
+
+            bool isCreated = changesDict.ContainsKey("Created") && changesDict["Created"].ToString() == "true";
+
+            string result = string.Join("<br>", changesDict
+                .Where(c => c.Value != null) // Ignore null values
+                .Select(c =>
+                {
+                    if (isCreated)
+                    {
+                        // ✅ Show only entered fields for "Created", highlight in BLUE
+                        return $"<b>{c.Key}:</b> <span class='text-primary'>{c.Value}</span>";
+                    }
+                    else
+                    {
+                        if (c.Value is JsonElement element && element.ValueKind == JsonValueKind.Object)
+                        {
+                            var valueDict = JsonSerializer.Deserialize<Dictionary<string, object>>(element.GetRawText());
+
+                            string oldValue = valueDict.ContainsKey("OldValue") ? valueDict["OldValue"]?.ToString() ?? "N/A" : "N/A";
+                            string newValue = valueDict.ContainsKey("NewValue") ? valueDict["NewValue"]?.ToString() ?? "N/A" : "N/A";
+
+                            if (oldValue != newValue)
+                            {
+                                // ✅ Highlight changes (Old Value - Red, New Value - Green)
+                                return $"<b>{c.Key}:</b> <span class='text-danger'>{oldValue}</span> ➝ <span class='text-success'>{newValue}</span>";
+                            }
+                            else
+                            {
+                                // ✅ No change, normal text
+                                return $"<b>{c.Key}:</b> {newValue}";
+                            }
+                        }
+                        else
+                        {
+                            return $"<b>{c.Key}:</b> {c.Value}"; // Normal value (unchanged)
+                        }
+                    }
+                }));
+
+            return new MarkupString(result);
+        }
+        catch
+        {
+            return new MarkupString(json); // Fallback if JSON parsing fails
+        }
+    }
+
+
+
+
+}

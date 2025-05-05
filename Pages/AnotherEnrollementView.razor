@@ -1,0 +1,100 @@
+﻿@page "/another-enrollment-view/{Id:int}"
+@using BlazorApp1.Model
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    EnrollmentDetail? Enrollment;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Enrollment = await Http.GetFromJsonAsync<EnrollmentDetail>($"api/EnrollmentDetail/get/{Id}");
+    }
+
+    void GoBack()
+    {
+        Navigation.NavigateTo("/student-enrollment-list");
+    }
+}
+@if (Enrollment == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h5><b>Enrollment Details</b></h5>
+    <table class="table table-bordered">
+        <tbody>
+
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">1</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Admission Number in Present School</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@Enrollment.AdmissionNumber</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">2</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>AdmissionDate(MM/DD/YYYY)in Present School</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@Enrollment.AdmissionDate.ToShortDateString()</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">3</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Class/Section Roll No</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@Enrollment.ClassRollNo</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">4</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Medium of Instruction</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.MediumOfInstruction ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">5</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Languages Group Studied by the Student</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.LanguagesGroupStudied ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">6</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Academic Stream opted by the Student</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.AcademicGroupStudied ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">7</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Subjects Group Studied by the Student</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.SubjectsGroupStudied ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">8</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Status of Student in Previous Academic Year Schooling</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.PreviousAcademicYear ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">9</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Grade/Class Studied in the Previous/Last Academic Year</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.StatusPreviousYear ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">10</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Admitted/Enrolled Under(Only for pvt.Unaided)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.Admitted ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">11</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>In the Previous Class Studied-result of the examinations </b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.PreviousClass ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">12</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>Marks Obtained (in Percentage)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.Marks ?? "N/A")</td>
+            </tr>
+            <tr>
+                <td style="width: 5%; background-color: #f9f9f9;">13</td>
+                <td style="width: 65%; background-color: #f9f9f9;"><b>No.of days Child attended school(in the previous academic year)</b></td>
+                <td style="width: 60%; background-color: #ffffff;">@(Enrollment.PreviousAttendance ?? "N/A")</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button class="btn btn-secondary" @onclick="GoBack">Back to List</button>
+}

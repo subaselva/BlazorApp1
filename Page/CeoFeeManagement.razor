@@ -1,0 +1,320 @@
+﻿@page "/fee1"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using BlazorApp1.Services
+@using BlazorApp1.Model
+@inject NavigationManager Navigation
+@inject StudentFeeService StudentFeeService
+@inject IJSRuntime JSRuntime
+@inject AuthenticationStateProvider AuthStateProvider
+
+@attribute [Authorize(Roles = "CEO")]
+<h3 class="title">🎓 Student Fee Management</h3>
+
+<div class="d-flex justify-content-between mb-3">
+    <a href="/feeadd" class="btn btn-primary d-flex align-items-center gap-2" style="width: fit-content; height: 100%; background-color: white; color: red;">
+
+        <i class="bi bi-plus-circle"></i> Add Student
+    </a>
+    <input @bind="SearchQuery" @bind:event="oninput" class="form-control w-25" placeholder="🔍 Search by Name or Reg No..." />
+</div>
+
+<table class="table table-custom table-hover table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Registration Number</th>
+            <th>Name</th>
+            <th>Is New Student</th>
+            <th>Class</th>
+            <th>Admission Fee</th>
+            <th>Admission Amount Paid</th>
+            <th>Admission Due</th>
+            <th>Admission Bill No</th>
+            <th>Admission Date</th>
+            <th>First Term Fee</th>
+            <th>First Term Amount Paid</th>
+            <th>First Term Due</th>
+            <th>First Term Bill No</th>
+            <th>First Term Date</th>
+            <th>Second Term Fee</th>
+            <th>Second Term Amount Paid</th>
+            <th>Second Term Due</th>
+            <th>Second Term Bill No</th>
+            <th>Second Term Date</th>
+            <th>Annual Fees</th>
+            <th>Dues</th>
+            <th>Concession</th>
+            <th>Remarks</th>
+            <th>Bus First Term Fee</th>
+            <th>Bus First Term Amount Paid</th>
+            <th>Bus First Term Due</th>
+            <th>Bus Second Term Fee</th>
+            <th>Bus Second Term Amount Paid</th>
+            <th>Bus Second Term Due</th>
+            <th>Bus Point</th>
+            <th>WhatsApp Number</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var fee in PaginatedStudentFees)
+        {
+            <tr>
+                <td>@fee.RegistrationNumber</td>
+
+                @{
+                    var studentClass = fee.AdmissionAmountPaid == 0 || fee.FirstTermAmountPaid == 0 || fee.SecondTermAmountPaid == 0
+                    ? "table-danger"
+                    : (fee.AdmissionFee != fee.AdmissionAmountPaid || fee.FirstTermFee != fee.FirstTermAmountPaid || fee.SecondTermFee != fee.SecondTermAmountPaid
+                    ? "table-warning"
+                    : "");
+                }
+                <td class="@studentClass">
+                    @fee.StudentName
+                </td>
+
+                <td>@fee.IsNewStudent</td>
+                <td>@fee.ClassSection</td>
+                <td>@fee.AdmissionFee</td>
+                <td class="@(fee.AdmissionAmountPaid == 0 ? "table-danger" :
+    (fee.AdmissionFee != fee.AdmissionAmountPaid ? "table-warning" : ""))">
+                    @(fee.AdmissionAmountPaid == 0 ? "0" : fee.AdmissionAmountPaid)
+                </td>
+
+
+
+
+                <td>@fee.AdmissionDue</td>
+                <td>@fee.AdmissionBillNo</td>
+
+                <td>@(fee.AdmissionDate?.ToShortDateString() ?? "N/A")</td>
+                <td>@fee.FirstTermFee</td>
+
+
+                <td class="@(fee.FirstTermAmountPaid == 0 ? "table-danger" :
+    (fee.FirstTermFee != fee.FirstTermAmountPaid ? "table-warning" : ""))">
+                    @(fee.FirstTermAmountPaid == 0 ? "0" : fee.FirstTermAmountPaid)
+                </td>
+
+
+                <td>@fee.FirstTermDue</td>
+                <td>@fee.FirstTermBillNo</td>
+                <td>@(fee.FirstTermDate?.ToShortDateString() ?? "N/A")</td>
+                <td>@fee.SecondTermFee</td>
+
+                <td class="@(fee.SecondTermAmountPaid == 0 ? "table-danger" :
+    (fee.SecondTermFee != fee.SecondTermAmountPaid ? "table-warning" : ""))">
+                    @(fee.SecondTermAmountPaid == 0 ? "0" : fee.SecondTermAmountPaid)
+                </td>
+
+
+
+                <td>@fee.SecondTermDue</td>
+                <td>@fee.SecondTermBillNo</td>
+                <td>@(fee.SecondTermDate?.ToShortDateString() ?? "N/A")</td>
+                <td>@fee.AnnualFees</td>
+
+                @{
+                    var duesClass = fee.AdmissionAmountPaid == 0 || fee.FirstTermAmountPaid == 0 || fee.SecondTermAmountPaid == 0
+                    ? "table-danger"
+                    : (fee.AdmissionFee != fee.AdmissionAmountPaid || fee.FirstTermFee != fee.FirstTermAmountPaid || fee.SecondTermFee != fee.SecondTermAmountPaid
+                    ? "table-warning"
+                    : "");
+                }
+                <td class="@duesClass">
+                    @fee.Dues
+                </td>
+
+
+
+                <td>@fee.Concession</td>
+                <td>@fee.Remarks</td>
+
+                <td>@fee.BusFirstTermFee</td>
+                <td>@fee.BusFirstTermAmountPaid</td>
+
+
+                <td>@fee.BusFirstTermDue</td>
+
+                <td>@fee.BusSecondTermFee</td>
+
+                <td>@fee.BusSecondTermAmountPaid </td>
+
+
+                <td>@fee.BusSecondTermDue</td>
+                <td>@fee.BusPoint</td>
+                <td>@fee.WhatsAppNumber</td>
+
+                <td style="white-space:nowrap">
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-primary btn-sm w-100" href="/fees1/edit/@fee.RegistrationNumber">✏️ Edit</a>
+                        <button class="btn btn-danger btn-sm w-100" @onclick="() => ConfirmDelete(fee.RegistrationNumber)">🗑 Delete</button>
+                    </div>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+    <tfoot>
+        <tr class="table-info">
+            <td colspan="1"><strong>Total:</strong></td>
+            <td><strong>@feeSummary.TotalStudents</strong></td>
+            <td colspan="1"></td>
+            <td colspan="1"></td> 
+            <td><strong>@feeSummary.TotalAdmissionFee</strong></td>
+            <td><strong>@feeSummary.TotalAdmissionAmountPaid</strong></td>
+            <td><strong>@feeSummary.TotalAdmissionDue</strong></td>
+            <td colspan="1"></td>
+            <td colspan="1"></td>
+            <td><strong>@feeSummary.TotalFirstTermFee</strong></td>
+            <td><strong>@feeSummary.TotalFirstTermAmountPaid</strong></td>
+            <td><strong>@feeSummary.TotalFirstTermDue</strong></td>
+            <td colspan="1"></td>
+            <td colspan="1"></td>
+            <td><strong>@feeSummary.TotalSecondTermFee</strong></td>
+            <td><strong>@feeSummary.TotalSecondTermAmountPaid</strong></td>
+            <td><strong>@feeSummary.TotalSecondTermDue</strong></td>
+            <td colspan="1"></td>
+            <td colspan="1"></td>
+            <td><strong>@feeSummary.TotalAnnualFees</strong></td>
+            <td><strong>@feeSummary.TotalDues</strong></td>
+            <td><strong>@feeSummary.TotalConcession</strong></td>
+            <td colspan="1"></td>
+            <td><strong>@feeSummary.TotalBusFirstTermFee</strong></td>
+            <td><strong>@feeSummary.TotalBusFirstTermAmountPaid</strong></td>
+            <td><strong>@feeSummary.TotalBusFirstTermDue</strong></td>
+            <td><strong>@feeSummary.TotalBusSecondTermFee</strong></td>
+            <td><strong>@feeSummary.TotalBusSecondTermAmountPaid</strong></td>
+            <td><strong>@feeSummary.TotalBusSecondTermDue</strong></td>
+            <td colspan="1"></td>
+            <td colspan="1"></td>
+            <td colspan="1"></td>
+        </tr>
+    </tfoot>
+
+</table>
+
+<div class="mt-3 d-flex justify-content-center gap-2">
+    <!-- Prev -->
+    <button class="btn btn-outline-secondary"
+            @onclick="() => GoToPage(CurrentPage - 1)"
+            disabled="@(CurrentPage == 1)">
+        ⬅ Prev
+    </button>
+
+    <!-- Page numbers - CLICKABLE -->
+    @for (int p = 1; p <= TotalPages; p++)
+    {
+        var pageNumber = p; // 👈 capture the current loop value
+
+        <button class="btn @(pageNumber == CurrentPage ? "btn-primary fw-bold" : "btn-outline-primary")"
+                @onclick="() => GoToPage(pageNumber)">
+            @pageNumber
+        </button>
+    }
+
+
+    <!-- Next -->
+    <button class="btn btn-outline-secondary"
+            @onclick="() => GoToPage(CurrentPage + 1)"
+            disabled="@(CurrentPage == TotalPages)">
+        Next ➡
+    </button>
+</div>
+@inject HttpClient Http
+
+
+@code {
+
+   
+
+    private List<StudentFee> studentFees = new();
+    private FeeSummary feeSummary = new();
+    private string _searchQuery = "";
+
+    private int CurrentPage = 1;
+    private int PageSize = 10;
+
+    private string SearchQuery
+    {
+        get => _searchQuery;
+        set
+        {
+            _searchQuery = value;
+            CurrentPage = 1; // Reset to page 1 on search
+        }
+    }
+
+    // 🔸 Filtered and Paginated Data
+    private List<StudentFee> FilteredStudents => studentFees
+        .Where(f =>
+            string.IsNullOrWhiteSpace(SearchQuery) ||
+            f.StudentName.ToLower().Contains(SearchQuery.ToLower()) ||
+            f.RegistrationNumber.ToString().Contains(SearchQuery))
+        .ToList();
+
+    private int TotalPages => (int)Math.Ceiling((double)FilteredStudents.Count / PageSize);
+
+    private List<StudentFee> PaginatedStudentFees => FilteredStudents
+        .Skip((CurrentPage - 1) * PageSize)
+        .Take(PageSize)
+        .ToList();
+
+    private void GoToPage(int page)
+    {
+        if (page >= 1 && page <= TotalPages)
+        {
+            CurrentPage = page;
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        studentFees = await StudentFeeService.GetStudentFeesAsync();
+        feeSummary = await StudentFeeService.GetStudentFeeSummaryAsync();
+    }
+
+    private async Task ConfirmDelete(int registrationNumber)
+    {
+        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this record?");
+        if (confirmed)
+        {
+            await StudentFeeService.DeleteStudentFeeAsync(registrationNumber);
+            studentFees.RemoveAll(f => f.RegistrationNumber == registrationNumber);
+        }
+    }
+
+    
+
+    private bool IsFeeZero(StudentFee fee)
+    {
+        return fee.AdmissionAmountPaid.GetValueOrDefault() == 0 ||
+               fee.FirstTermAmountPaid.GetValueOrDefault() == 0 ||
+               fee.SecondTermAmountPaid.GetValueOrDefault() == 0;
+    }
+
+    // Highlight yellow if ALL are greater than 0
+    private bool IsAllPaid(StudentFee fee)
+    {
+        return fee.AdmissionAmountPaid.GetValueOrDefault() > 0 &&
+               fee.FirstTermAmountPaid.GetValueOrDefault() > 0 &&
+               fee.SecondTermAmountPaid.GetValueOrDefault() > 0;
+    }
+
+    private async Task DownloadExcel()
+    {
+        var response = await Http.GetAsync("api/students/export/excel");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+            await JSRuntime.InvokeVoidAsync("downloadFile", "Students.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", bytes);
+        }
+        else
+        {
+            Console.WriteLine("Excel export failed.");
+        }
+    }
+
+}

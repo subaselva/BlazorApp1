@@ -1,0 +1,207 @@
+﻿@page "/fees/edit/{id:int}"
+@using BlazorApp1.Services
+@using BlazorApp1.Model
+@inject StudentFeeService StudentFeeService
+@inject NavigationManager NavigationManager
+
+<h3 class="title">Edit Student Fee</h3>
+
+@if (studentFee == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="editRequest" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="StudentName">Student Name</label>
+            <InputText id="StudentName" class="form-control" @bind-Value="editRequest.UpdatedStudentName"  />
+        </div>
+
+        <div class="form-group">
+            <label for="UpdatedIsNewStudent">Is New Student</label>
+            <InputText id="UpdatedIsNewStudent" class="form-control" @bind-Value="editRequest.UpdatedIsNewStudent" />
+        </div>
+
+        <div class="form-group">
+            <label for="UpdatedClassSection">Class</label>
+            <InputText id="UpdatedClassSection" class="form-control" @bind-Value="editRequest.UpdatedClassSection" />
+        </div>
+
+        <fieldset>
+            <legend>Admission Fee Details</legend>
+            <div class="form-group">
+                <label for="UpdatedAdmissionFee">Admission Fee</label>
+                <InputNumber id="UpdatedAdmissionFee" class="form-control" @bind-Value="editRequest.UpdatedAdmissionFee" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedAdmissionAmountPaid">Admission Amount Paid</label>
+                <InputNumber id="UpdatedAdmissionAmountPaid" class="form-control" @bind-Value="editRequest.UpdatedAdmissionAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedAdmissionBillNo">UpdatedAdmission BillNo</label>
+                <InputText id="UpdatedAdmissionBillNo" class="form-control" @bind-Value="editRequest.UpdatedAdmissionBillNo" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedAdmissionDate">UpdatedAdmission Date</label>
+                <InputDate id="UpdatedAdmissionDate" class="form-control" @bind-Value="editRequest.UpdatedAdmissionDate" />
+            </div>
+        </fieldset>
+
+
+        <fieldset>
+            <legend>First Term Fee Details</legend>
+            <div class="form-group">
+                <label for="UpdatedFirstTermFee">First Term Fee</label>
+                <InputNumber id="UpdatedFirstTermFee" class="form-control" @bind-Value="editRequest.UpdatedFirstTermFee" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedFirstTermAmountPaid">FirstTermAmountPaid</label>
+                <InputNumber id="UpdatedFirstTermAmountPaid" class="form-control" @bind-Value="editRequest.UpdatedFirstTermAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedFirstTermBillNo">UpdatedFirstTerm BillNo</label>
+                <InputText id="UpdatedFirstTermBillNo" class="form-control" @bind-Value="editRequest.UpdatedFirstTermBillNo" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedFirstTermDate">UpdatedFirstTerm Date</label>
+                <InputDate id="UpdatedFirstTermDate" class="form-control" @bind-Value="editRequest.UpdatedFirstTermDate" />
+            </div>
+
+        </fieldset>
+
+        <fieldset>
+            <legend>Second Term Fee Details</legend>
+            <div class="form-group">
+                <label for="UpdatedSecondTermFee">Second Term Fee</label>
+                <InputNumber id="UpdatedSecondTermFee" class="form-control" @bind-Value="editRequest.UpdatedSecondTermFee" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedSecondTermAmountPaid">SecondTermAmountPaid</label>
+                <InputNumber id="UpdatedSecondTermAmountPaid" class="form-control" @bind-Value="editRequest.UpdatedSecondTermAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedSecondTermBillNo">UpdatedSecondTerm BillNo</label>
+                <InputText id="UpdatedSecondTermBillNo" class="form-control" @bind-Value="editRequest.UpdatedSecondTermBillNo" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedSecondTermDate">UpdatedSecondTerm Date</label>
+                <InputDate id="UpdatedSecondTermDate" class="form-control" @bind-Value="editRequest.UpdatedSecondTermDate" />
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Fee Concession Details</legend>
+        <div class="form-group">
+            <label for="UpdatedConcession">UpdatedConcession </label>
+            <InputNumber id="UpdatedConcession" class="form-control" @bind-Value="editRequest.UpdatedConcession" />
+        </div>
+        <div class="form-group">
+            <label for="UpdatedRemarks">Remarks</label>
+            <InputText id="UpdatedRemarks" class="form-control" @bind-Value="editRequest.UpdatedRemarks" />
+        </div>
+        </fieldset>
+       <fieldset>
+            <legend>Bus Fee Details</legend>
+            <div class="form-group">
+                <label for="UpdatedBusFirstTermFee">Bus First Term Fee</label>
+                <InputNumber id="UpdatedBusFirstTermFee" class="form-control" @bind-Value="editRequest.UpdatedBusFirstTermFee" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedBusFirstTermAmountPaid">BusFirstTermAmountPaid </label>
+                <InputNumber id="UpdatedBusFirstTermAmountPaid" class="form-control" @bind-Value="editRequest.UpdatedBusFirstTermAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedBusSecondTermFee">BusSecondTermFee </label>
+                <InputNumber id="UpdatedBusSecondTermFee" class="form-control" @bind-Value="editRequest.UpdatedBusSecondTermFee" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedBusSecondTermAmountPaid">BusSecondTermAmountPaid </label>
+                <InputNumber id="UpdatedBusSecondTermAmountPaid" class="form-control" @bind-Value="editRequest.UpdatedBusSecondTermAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="UpdatedBusPoint">BusPoint </label>
+                <InputText id="UpdatedBusPoint" class="form-control" @bind-Value="editRequest.UpdatedBusPoint" />
+            </div>
+        </fieldset>
+
+        
+        <div class="form-group">
+
+            <label for="UpdatedWhatsAppNumber">WhatsAppNumber</label>
+            <InputText id="UpdatedWhatsAppNumber" class="form-control" @bind-Value="editRequest.UpdatedWhatsAppNumber" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit for Approval</button>
+    </EditForm>
+
+    @if (!string.IsNullOrEmpty(statusMessage))
+    {
+        <div class="alert alert-info mt-3">@statusMessage</div>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private StudentFee studentFee;
+    private StudentFeeEditRequest editRequest = new();
+    private string statusMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        studentFee = await StudentFeeService.GetStudentFeeAsync(Id);
+        if (studentFee != null)
+        {
+            editRequest = new StudentFeeEditRequest
+                {
+                    RegistrationNumber = studentFee.RegistrationNumber,
+                    UpdatedStudentName = studentFee.StudentName,
+                    UpdatedClassSection = studentFee.ClassSection,
+                    UpdatedIsNewStudent = studentFee.IsNewStudent,
+                    UpdatedAdmissionFee = studentFee.AdmissionFee,
+                    UpdatedAdmissionAmountPaid = studentFee.AdmissionAmountPaid,
+                    UpdatedAdmissionBillNo = studentFee.AdmissionBillNo,
+                    UpdatedAdmissionDate = studentFee.AdmissionDate,
+                    UpdatedFirstTermFee = studentFee.FirstTermFee,
+                    UpdatedFirstTermAmountPaid = studentFee.FirstTermAmountPaid,
+                    UpdatedFirstTermBillNo = studentFee.FirstTermBillNo,
+                    UpdatedFirstTermDate = studentFee.FirstTermDate,
+                    UpdatedSecondTermFee = studentFee.SecondTermFee,
+                    UpdatedSecondTermAmountPaid = studentFee.SecondTermAmountPaid,
+                    UpdatedSecondTermBillNo = studentFee.SecondTermBillNo,
+                    UpdatedSecondTermDate = studentFee.SecondTermDate,
+                    UpdatedBusFirstTermFee = studentFee.BusFirstTermFee,
+                    UpdatedBusFirstTermAmountPaid = studentFee.BusFirstTermAmountPaid,
+                    UpdatedBusSecondTermFee = studentFee.BusSecondTermFee,
+                    UpdatedBusSecondTermAmountPaid = studentFee.BusSecondTermAmountPaid,
+                    UpdatedBusPoint=studentFee.BusPoint,
+                    UpdatedConcession = studentFee.Concession,
+                    UpdatedRemarks = studentFee.Remarks,
+                    UpdatedWhatsAppNumber = studentFee.WhatsAppNumber
+                };
+        }
+    }
+
+    @inject NavigationManager Navigation
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await StudentFeeService.SubmitEditRequestAsync(editRequest);
+        if (response.IsSuccess)
+        {
+            statusMessage = "Edit request submitted for approval.";
+
+            // Redirect to the fee page
+            Navigation.NavigateTo("/fee");
+        }
+        else
+        {
+            statusMessage = "Error submitting edit request.";
+        }
+    }
+
+}
+
+

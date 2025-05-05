@@ -1,0 +1,160 @@
+﻿@using BlazorApp1.Model
+@code {
+    [Parameter] public BlazorApp1.Model.Student Student { get; set; } = new BlazorApp1.Model.Student();
+}
+
+<table class="table table-bordered">
+    <tbody>
+        
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">1</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Roll Number</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.RollNumber</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">2</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Student's Name(as per School Record)</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.Name</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">3</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Gender</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.Gender</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">4</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Date of Birth(MM/DD/YYYY)</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.DateOfBirth.ToShortDateString()</td>
+        </tr>
+
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">5</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Permanent Education Number</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.PermanentEducationNumber</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">6</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Mother's Name</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.MotherName</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">7</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Father's Name</td>
+            <td style="width: 6%; background-color: #ffffff;">@Student.FatherName</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">8</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Guardian's Name</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.GuardianName</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">9</td>
+            <td style="width: 65%; background-color: #f9f9f9;">AADHAAR Number of Student</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.AadharNumber</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">10</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Name of Student as per/in AADHAAR Card</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.NameOnAadhar</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">11</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Address</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.Address</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">12</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Pincode</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.Pincode</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">13</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Mobile Number(of Student/Parent/Guardian)</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.MobileNumber</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">14</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Alternate Mobile Number(of Student/Parent/Guardian)</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.MobileNumber</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">15</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Contact email-id(of Student/Parent/Guardian)</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.Email</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">16</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Mother Tongue of the Student</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.MotherTongue</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">17</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Social Category</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.SocialCategory</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">18</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Minority Group</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.MinorityGroup</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">19</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Whether BPL beneficiary</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.IsBPLBeneficiary</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">20</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Whether Antyodaya Anna Yojana(AAY) Beneficiary</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.IsAAYBeneficiary</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">21</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Whether belongs to EWS/Disadvantages Group</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.IsEWS</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">22</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Whether CWSN</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.IsCWSN</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">23</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Type of Impairments</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.TypeOfImpairment</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">24</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Indian Nationality</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.IsIndian</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">25</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Is Child Identified as Out of School-Child</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.IsOutOfSchool</td>
+        </tr>
+        
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">26</td>
+            <td style="width: 65%; background-color: #f9f9f9;">When the Child is mainstreamed</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.HasDisabilityCertificate</td>
+        </tr>
+
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">27</td>
+            <td style="width: 65%; background-color: #f9f9f9">Whether Disability Certificate Issued</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.HasDisabilityCertificate</td>
+            </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">28</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Disability Percentage(in %)</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.DisabilityPercentage%</td>
+        </tr>
+        <tr>
+            <td style="width: 5%; background-color: #f9f9f9;">29</td>
+            <td style="width: 65%; background-color: #f9f9f9;">Blood Group</td>
+            <td style="width: 60%; background-color: #ffffff;">@Student.BloodGroup</td>
+        </tr>
+    </tbody>
+</table>
+
+       

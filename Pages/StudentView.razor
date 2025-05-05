@@ -1,0 +1,58 @@
+﻿@page "/students"
+@inject HttpClient Http
+
+<h3 class="text-xl font-semibold mb-4">Student List</h3>
+
+<!-- 🔍 Search Inputs -->
+<div class="mb-4 flex gap-4">
+    <input class="form-control" @bind="searchRoll" placeholder="Search by Roll Number" />
+    <input class="form-control" @bind="searchName" placeholder="Search by Name" />
+</div>
+
+@if (isLoading)
+{
+    <p>Loading students...</p>
+}
+else if (filteredStudents.Any())
+{
+    @foreach (var student in filteredStudents)
+    {
+        <div class="student-card">
+            <StudentDetails Student="student" />
+        </div>
+        <hr />
+    }
+}
+else
+{
+    <p>No students found.</p>
+}
+
+@code {
+    private List<BlazorApp1.Model.Student> students = new();
+    private bool isLoading = true;
+
+    // Search inputs
+    private string searchRoll = "";
+    private string searchName = "";
+
+    // Computed property for filtering
+    private IEnumerable<BlazorApp1.Model.Student> filteredStudents => students
+        .Where(s =>
+            (string.IsNullOrWhiteSpace(searchRoll) || s.RollNumber.Contains(searchRoll, StringComparison.OrdinalIgnoreCase)) &&
+            (string.IsNullOrWhiteSpace(searchName) || s.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase))
+        );
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            students = await Http.GetFromJsonAsync<List<BlazorApp1.Model.Student>>("api/students/view-only");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching students: {ex.Message}");
+        }
+        isLoading = false;
+    }
+}

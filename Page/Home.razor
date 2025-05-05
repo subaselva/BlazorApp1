@@ -1,0 +1,97 @@
+﻿@page "/"
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject StudentFeeService StudentFeeService
+
+<PageTitle>Welcome - Student Fee Management</PageTitle>
+
+<div class="container mt-5">
+    <!-- Welcome Message -->
+    <div class="text-center">
+        <h1 class="text-primary fw-bold">✨ Welcome to Jai Hind Public School ✨</h1>
+        <p class="text-muted">An institution known for <strong>academic excellence</strong> and <strong>diverse learning strategies</strong>.</p>
+    </div>
+
+    <!-- School & Fee Management Section -->
+    <div class="row mt-5">
+        <div class="col-md-6 text-center">
+            <img src="logo.png" class="img-fluid rounded shadow" alt="School Logo" style="max-width: 150px; height: auto;">
+        </div>
+
+        <div class="col-md-6 d-flex align-items-center">
+            <div>
+                <h2 class="text-success">📚 Student Fee Management System</h2>
+                <p>We ensure a <strong>smooth and transparent</strong> fee collection process, making management hassle-free for accountants.</p>
+                <p class="text-primary fw-bold">A warm welcome to our dedicated accountants, your work makes education seamless! 🎓</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards Section -->
+    <div class="row mt-5">
+        <!-- Total Students -->
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">📌 Total Students</div>
+                <div class="card-body text-center">
+                    <h3 class="card-title">@feeSummary.TotalStudents</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Pending Fees -->
+        <div class="col-md-4">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-header">💰 Total Pending Fees</div>
+                <div class="card-body text-center">
+                    <h3 class="card-title">₹@feeSummary.TotalDues</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Pending Approvals -->
+        <div class="col-md-4">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">📝 Pending Approvals</div>
+                <div class="card-body text-center">
+                    <h3 class="card-title">@((pendingApprovals + pendingDeleteRequests))</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    private FeeSummary feeSummary = new();
+    private int pendingApprovals = 0;
+    private int pendingDeleteRequests = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch data for fee summary, pending approvals, and delete requests
+        await FetchFeeSummary();
+        await FetchPendingApprovals();
+        await FetchDeleteRequests(); // Call FetchDeleteRequests to get pending delete requests
+    }
+
+    private async Task FetchFeeSummary()
+    {
+        feeSummary = await StudentFeeService.GetStudentFeeSummaryAsync();
+    }
+
+    private async Task FetchPendingApprovals()
+    {
+        var response = await Http.GetFromJsonAsync<List<StudentFeeEditRequest>>("api/StudentFees/pending-edits");
+        if (response != null)
+        {
+            pendingApprovals = response.Count;
+        }
+    }
+
+    private async Task FetchDeleteRequests()
+    {
+        var deleteRequests = await Http.GetFromJsonAsync<List<DeleteRequestDto>>("api/StudentFees/DeleteRequests") ?? new List<DeleteRequestDto>();
+        pendingDeleteRequests = deleteRequests.Count;
+    }
+}

@@ -1,0 +1,169 @@
+﻿@page "/fees1/edit/{id:int}"
+@using BlazorApp1.Services
+@using BlazorApp1.Model
+@inject StudentFeeService StudentFeeService
+@inject NavigationManager NavigationManager
+
+<h3 class="title">Edit Student Fee</h3>
+
+@if (studentFee == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <EditForm Model="studentFee" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="StudentName">Student Name</label>
+            <ValidationMessage For="@(() => studentFee.StudentName)" />
+            <InputText id="StudentName" class="form-control" @bind-Value="studentFee.StudentName"/>
+             
+        </div>
+
+        <div class="form-group">
+            <label for="IsNewStudent">Is New Student</label>
+            <InputText id="IsNewStudent" class="form-control" @bind-Value="studentFee.IsNewStudent" />
+        </div>
+
+        <div class="form-group">
+            <label for="IsClassStudent">Class</label>
+            <ValidationMessage For="@(() => studentFee.ClassSection)" />
+            <InputText id="IsClassStudent" class="form-control" @bind-Value="studentFee.ClassSection" />
+            
+        </div>
+
+        <fieldset>
+            <legend>Admission Fee Details</legend>
+            <div class="form-group">
+                <label for="AdmissionFee">Admission Fee</label>
+                <InputNumber id="AdmissionFee" class="form-control" @bind-Value="studentFee.AdmissionFee" />
+            </div>
+            <div class="form-group">
+                <label for="AdmissionAmountPaid">Admission Amount Paid</label>
+                <InputNumber id="AdmissionAmountPaid" class="form-control" @bind-Value="studentFee.AdmissionAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="AdmissionBillNo">Admission Bill Number</label>
+                <InputText id="AdmissionBillNo" class="form-control" @bind-Value="studentFee.AdmissionBillNo" />
+            </div>
+            <div class="form-group">
+                <label for="AdmissionDate">Admission Date</label>
+                <InputDate id="AdmissionDate" class="form-control" @bind-Value="studentFee.AdmissionDate" />
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>First Term Fee Details</legend>
+            <div class="form-group">
+                <label for="FirstTermFee">First Term Fee</label>
+                <InputNumber id="FirstTermFee" class="form-control" @bind-Value="studentFee.FirstTermFee" />
+            </div>
+            <div class="form-group">
+                <label for="FirstTermAmountPaid">First Term Amount Paid</label>
+                <InputNumber id="FirstTermAmountPaid" class="form-control" @bind-Value="studentFee.FirstTermAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="FirstTermBillNo">FirstTerm BillNo</label>
+                <InputText id="FirstTermBillNo" class="form-control" @bind-Value="studentFee.FirstTermBillNo" />
+            </div>
+            <div class="form-group">
+                <label for="FirstTermDate">FirstTerm Date</label>
+                <InputDate id="FirstTermDate" class="form-control" @bind-Value="studentFee.FirstTermDate" />
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Second Term Fee Details</legend>
+            <div class="form-group">
+                <label for="SecondTermFee">Second Term Fee</label>
+                <InputNumber id="SecondTermFee" class="form-control" @bind-Value="studentFee.SecondTermFee" />
+            </div>
+            <div class="form-group">
+                <label for="SecondTermAmountPaid">Second Term Amount Paid</label>
+                <InputNumber id="SecondTermAmountPaid" class="form-control" @bind-Value="studentFee.SecondTermAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="SecondTermBillNo">SecondTerm BillNo</label>
+                <InputText id="SecondTermBillNo" class="form-control" @bind-Value="studentFee.SecondTermBillNo" />
+            </div>
+            <div class="form-group">
+                <label for="SecondTermDate">SecondTerm Date</label>
+                <InputDate id="SecondTermDate" class="form-control" @bind-Value="studentFee.SecondTermDate" />
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Fee Concession Details</legend>
+            <div class="form-group">
+                <label for="Concession">Concession </label>
+                <InputNumber id="UpdatedConcession" class="form-control" @bind-Value="studentFee.Concession" />
+            </div>
+            <div class="form-group">
+                <label for="Remarks">Remarks</label>
+                <InputText id="Remarks" class="form-control" @bind-Value="studentFee.Remarks" />
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Bus Fee Details</legend>
+            <div class="form-group">
+                <label for="BusFirstTermFee">Bus First Term Fee</label>
+                <InputNumber id="BusFirstTermFee" class="form-control" @bind-Value="studentFee.BusFirstTermFee" />
+            </div>
+            <div class="form-group">
+                <label for="BusFirstTermAmountPaid">BusFirstTermAmountPaid </label>
+                <InputNumber id="BusFirstTermAmountPaid" class="form-control" @bind-Value="studentFee.BusFirstTermAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="BusSecondTermFee">BusSecondTermFee </label>
+                <InputNumber id="BusSecondTermFee" class="form-control" @bind-Value="studentFee.BusSecondTermFee" />
+            </div>
+            <div class="form-group">
+                <label for="BusSecondTermAmountPaid">BusSecondTermAmountPaid </label>
+                <InputNumber id="BusSecondTermAmountPaid" class="form-control" @bind-Value="studentFee.BusSecondTermAmountPaid" />
+            </div>
+            <div class="form-group">
+                <label for="BusPoint">BusPoint </label>
+                <InputText id="BusPoint" class="form-control" @bind-Value="studentFee.BusPoint" />
+            </div>
+        </fieldset>
+
+        <div class="form-group">
+            <label for="WhatsAppNumber">WhatsAppNumber</label>
+            <InputText id="WhatsAppNumber" class="form-control" @bind-Value="studentFee.WhatsAppNumber" />
+             <ValidationMessage For="@(() => studentFee.WhatsAppNumber)" />
+        </div>
+        <div class="d-flex gap-2">
+        <td style="white-space:nowrap">
+            
+            <button type="submit" class="btn btn-primary btn-group-sm">Update</button>
+        <a class="btn btn-primary btn-sm" href="/fee1">✏️ Cancel</a>
+        
+        </td>
+        </div>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private StudentFee studentFee ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        studentFee = await StudentFeeService.GetStudentFeeAsync(Id);
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var response = await StudentFeeService.UpdateStudentFeeAsync(Id, studentFee);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/fee1");
+        }
+        else
+        {
+            Console.WriteLine("Error updating student fee.");
+        }
+    }
+}

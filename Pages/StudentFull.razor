@@ -1,0 +1,102 @@
+﻿@page "/studentfull"
+@inject HttpClient Http
+
+<h3 class="text-xl font-semibold mb-4">📋 Full Student View</h3>
+
+<!-- 🔍 Search Inputs -->
+<div class="mb-4 flex gap-4">
+    <input class="form-control" @bind="searchRoll" placeholder="Search by Roll Number" />
+    <input class="form-control" @bind="searchName" placeholder="Search by Name" />
+</div>
+
+@if (isLoading)
+{
+    <p>Loading students...</p>
+}
+else if (filteredStudents.Any())
+{
+    @foreach (var full in filteredStudents)
+    {
+        <div class="student-card border p-3 mb-4 rounded shadow">
+            <!-- 🎓 Student Details -->
+            <StudentDetails Student="full.Student" />
+
+            <!-- 🏫 Enrollment View -->
+            @if (full.Student.Enrollment != null)
+            {
+                <EnrollmentDetailView Enrollment="full.Student.Enrollment" />
+            }
+            else
+            {
+                <p>No enrollment details available.</p>
+            }
+            <!-- 👤 Profile View -->
+            @if (full.Student.Profile != null)
+            {
+                <StudentProfileView StudentProfile="full.Student.Profile" />
+            }
+            else
+            {
+                <p>No profile available.</p>
+            }
+
+            
+            
+        </div>
+    }
+}
+else
+{
+    <p>No students found.</p>
+}
+
+@code {
+    private List<FullStudentInfo> students = new();
+    private bool isLoading = true;
+
+    private string searchRoll = "";
+    private string searchName = "";
+
+    // 🔍 Filter students based on search input
+    private IEnumerable<FullStudentInfo> filteredStudents => students
+        .Where(s =>
+            string.IsNullOrWhiteSpace(searchRoll) || s.Student.RollNumber.Contains(searchRoll, StringComparison.OrdinalIgnoreCase)
+        )
+        .Where(s =>
+            string.IsNullOrWhiteSpace(searchName) || s.Student.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase)
+        );
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // ✅ Fetch all data from APIs
+            var studentList = await Http.GetFromJsonAsync<List<Student>>("api/students/view-only");
+            var profileList = await Http.GetFromJsonAsync<List<StudentProfile>>("api/StudentProfile/all");
+            var enrollmentList = await Http.GetFromJsonAsync<List<EnrollmentDetail>>("api/EnrollmentDetail/all");
+
+            // 🔗 Combine profiles and enrollments into student
+            students = studentList.Select(s =>
+    {
+    s.Profile = profileList.FirstOrDefault(p => p.StudentId == s.Id);
+    s.Enrollment = enrollmentList.FirstOrDefault(e => e.StudentId == s.Id);
+
+    return new FullStudentInfo
+        {
+            Student = s
+        };
+    }).ToList();
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Error loading data: {ex.Message}");
+        }
+
+        isLoading = false;
+    }
+
+    // 👤 Class representing combined info
+
+}

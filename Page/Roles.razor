@@ -1,0 +1,64 @@
+﻿@page "/roles"
+@inject HttpClient Http
+
+<div class="role-container">
+    <h3 class="title">Role Management</h3>
+
+    <!-- Display All Roles -->
+    <div>
+        <h4 class="subtitle">Existing Roles</h4>
+        <ul class="role-list">
+            @if (roles != null && roles.Count > 0)
+            {
+                foreach (var role in roles)
+                {
+                    <li class="role-item">@role.Name</li>
+                }
+            }
+            else
+            {
+                <li class="role-item">No roles available</li>
+            }
+        </ul>
+    </div>
+
+    <!-- Add New Role -->
+    <div>
+        <h4 class="subtitle">Add a New Role</h4>
+        <input @bind="newRole" placeholder="Enter role name" class="form-control" />
+        <button @onclick="AddRole" class="btn btn-primary">Add Role</button>
+    </div>
+</div>
+
+@code {
+    private List<RoleDto> roles = new();
+    private string newRole;
+
+    protected override async Task OnInitializedAsync()
+    {
+        roles = await Http.GetFromJsonAsync<List<RoleDto>>("/api/Role");
+    }
+
+    private async Task AddRole()
+    {
+        if (!string.IsNullOrEmpty(newRole))
+        {
+            var response = await Http.PostAsJsonAsync($"/api/Role?name={newRole}", newRole);
+            if (response.IsSuccessStatusCode)
+            {
+                roles.Add(new RoleDto { Name = newRole });
+                newRole = string.Empty;
+            }
+            else
+            {
+                Console.WriteLine("Failed to add role");
+            }
+        }
+    }
+
+    public class RoleDto
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
+}

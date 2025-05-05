@@ -1,0 +1,131 @@
+﻿﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <span></span> <!-- Keeps space empty without breaking layout -->
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <div class="nav-logo">
+        <img src="logo.png" alt="Logo" class="logo">
+    </div>
+    <nav class="nav flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <nav class="nav flex-column">
+            <!-- Dropdown Toggle -->
+            <div class="nav-item px-3">
+                <a class="nav-link" @onclick="ToggleDropdown" style="cursor: pointer;">
+                    <i class=" bi bi-plus-square-fill-nav-menu @($"bi {ChevronIcon} me-1")"></i> Student Management
+                </a>
+            </div>
+
+            <!-- Dropdown Content -->
+            <div class="@DropdownCssClass px-4" style="overflow-y: auto; transition: max-height 0.3s ease;">
+                
+                <NavLink class="nav-link text-white" href="/students-list">
+                    <i class="bi bi-list-ul me-1"></i> Student List
+                </NavLink>
+                <NavLink class="nav-link text-white" href="/student-enrollment-list">
+                    <i class="bi bi-plus-square-fill me-1" aria-hidden="true style="color: white;"></i> Enrollment List
+                </NavLink>
+                <NavLink class="nav-link text-white" href="/student-profile-list">
+                    <i class="bi bi-person-lines-fill me-1"></i> Profile List
+                </NavLink>
+                <NavLink class="nav-link text-white" href="/studentfull">
+                    <i class="bi bi-card-checklist me-1"></i> Full Details
+                </NavLink>
+            </div>
+        </nav>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/restore-database">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Recovery
+            </NavLink>
+        </div>
+        <AuthorizeView Roles="Accountant">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/fee">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> StudentFeeManagement
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
+        <AuthorizeView Roles="CEO">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/fee1">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>CEOStudentFeeManagement
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/audit-logs">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>AuditLog
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/roles">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>Role Management
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/user-roles">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>User Role Management
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/calendar">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Calendar
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/ceo-dashboard">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Ceo-Dashboard
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/register">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Register
+            </NavLink>
+        </div>
+
+
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private bool isDropdownOpen = false;
+
+    // Class to control visibility of the sub-links
+    private string DropdownCssClass => isDropdownOpen ? "dropdown-open" : "d-none";
+
+    // Icon direction toggle
+    private string ChevronIcon => isDropdownOpen ? "bi-chevron-up" : "bi-chevron-down";
+
+    // Toggle method
+    private void ToggleDropdown()
+    {
+        isDropdownOpen = !isDropdownOpen;
+    }
+}

@@ -1,0 +1,212 @@
+﻿@page "/ceo-dashboard"
+@inject SignalRService SignalRService
+@inject HttpClient Http
+@using BlazorApp1.Model
+<PageTitle>CEO Dashboard</PageTitle>
+
+<h3 class="title">Pending Fee Edit Requests</h3>
+
+@if (pendingRequests != null && pendingRequests.Count > 0)
+{
+    <ul class="list-group">
+        @foreach (var request in pendingRequests)
+        {
+            <li class="list-group-item">
+                <h5>Registration #: @request.RegistrationNumber</h5>
+
+                @if (originalDataMap.ContainsKey(request.RegistrationNumber))
+                {
+                    var originalData = originalDataMap[request.RegistrationNumber];
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Before Editing</th>
+                                <th>After Editing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var property in typeof(StudentFeeEditRequest).GetProperties())
+                            {
+                                var originalValue = originalData?.GetType().GetProperty(property.Name.Replace("Updated", ""))?.GetValue(originalData);
+                                var updatedValue = property.GetValue(request);
+
+                                if (updatedValue != null && !Equals(originalValue, updatedValue))
+                                {
+                                    <tr class="table-warning">
+                                        <td><strong>@property.Name.Replace("Updated", "")</strong></td>
+                                        <td>@(originalValue ?? "N/A")</td>
+                                        <td style="background-color: lightyellow;">@updatedValue</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+
+                    </table>
+
+                    <div>
+                        <button class="btn btn-success" @onclick="() => ApproveRequest(request.Id)">Approve</button>
+                        <button class="btn btn-danger" @onclick="() => RejectRequest(request.Id)">Reject</button>
+                    </div>
+                }
+                else
+                {
+                    <p>Loading original data...</p>
+                }
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <div class="alert alert-info">
+        No pending requests at the moment.
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(notificationMessage))
+{
+    <div class="alert alert-info">
+        @notificationMessage
+    </div>
+}
+<h3 class="title mt-5">Pending Delete Requests</h3>
+
+@if (deleteRequests.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Registration Number</th>
+                <th>Student Name</th>
+                <th>Requested By</th>
+                <th>Requested At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var request in deleteRequests)
+            {
+                <tr>
+                    <td>@request.StudentFeeId</td>
+                    <td>@request.StudentName</td>
+                    <td>@request.RequestedBy</td>
+                    <td>@request.RequestedAt.ToLocalTime().ToString("g")</td>
+                    <td>
+                        <button class="btn btn-success" @onclick="() => ApproveDelete(request.Id)">Approve</button>
+                        <button class="btn btn-danger" @onclick="() => RejectDelete(request.Id)">Reject</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="alert alert-info">No pending delete requests.</p>
+}
+
+@code {
+    private List<StudentFeeEditRequest> pendingRequests = new();
+    private Dictionary<int, StudentFee> originalDataMap = new(); // Store original data per student
+    private string notificationMessage = string.Empty;
+    private List<DeleteRequestDto> deleteRequests = new();
+
+    private async Task FetchDeleteRequests()
+    {
+        deleteRequests = await Http.GetFromJsonAsync<List<DeleteRequestDto>>("api/StudentFees/DeleteRequests") ?? new();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchPendingRequests();
+        await FetchPendingRequests();
+        await FetchDeleteRequests();
+    }
+
+    private async Task FetchPendingRequests()
+    {
+        var response = await Http.GetFromJsonAsync<List<StudentFeeEditRequest>>("api/StudentFees/pending-edits");
+        if (response != null)
+        {
+            pendingRequests = response;
+            originalDataMap.Clear(); // Clear previous data
+
+            foreach (var request in pendingRequests)
+            {
+                await FetchOriginalData(request.RegistrationNumber);
+            }
+        }
+    }
+
+    private async Task FetchOriginalData(int registrationNumber)
+    {
+        if (!originalDataMap.ContainsKey(registrationNumber))
+        {
+            var originalData = await Http.GetFromJsonAsync<StudentFee>($"api/StudentFees/{registrationNumber}");
+            if (originalData != null)
+            {
+                originalDataMap[registrationNumber] = originalData; // Store in dictionary
+            }
+        }
+    }
+
+    private async Task ApproveRequest(int id)
+    {
+        var response = await Http.PostAsync($"api/StudentFees/approve-edit/{id}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            notificationMessage = "Request approved successfully.";
+            await FetchPendingRequests();
+        }
+        else
+        {
+            notificationMessage = "Error approving request.";
+        }
+    }
+
+    private async Task RejectRequest(int id)
+    {
+        var response = await Http.PostAsync($"api/StudentFees/reject-edit/{id}", null);
+        if (response.IsSuccessStatusCode)
+        {
+            notificationMessage = "Request rejected successfully.";
+            await FetchPendingRequests();
+        }
+        else
+        {
+            notificationMessage = "Error rejecting request.";
+        }
+    }
+
+    
+    private async Task ApproveDelete(int id)
+    {
+        var response = await Http.DeleteAsync($"api/StudentFees/ApproveDelete/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            notificationMessage = "Delete request approved.";
+            await FetchDeleteRequests();
+        }
+        else
+        {
+            notificationMessage = "Error approving delete request.";
+        }
+    }
+
+    private async Task RejectDelete(int id)
+    {
+        var response = await Http.DeleteAsync($"api/StudentFees/RejectDelete/{id}"); // This should be a real endpoint
+        if (response.IsSuccessStatusCode)
+        {
+            notificationMessage = "Delete request rejected.";
+            await FetchDeleteRequests();
+        }
+        else
+        {
+            notificationMessage = "Error rejecting delete request.";
+        }
+    }
+
+}
+

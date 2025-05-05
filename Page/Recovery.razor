@@ -1,0 +1,57 @@
+﻿@page "/restore-database"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<h3>Restore Database</h3>
+
+<button class="btn btn-danger" @onclick="RecoverData">Restore Database</button>
+
+@if (isRestoring)
+{
+    <p>Restoring database, please wait...</p>
+}
+
+@if (isRestored)
+{
+    <p class="text-success">Database has been successfully restored!</p>
+}
+
+@if (restoreError)
+{
+    <p class="text-danger">An error occurred during restoration. Please try again.</p>
+}
+
+@code {
+    private bool isRestoring = false;
+    private bool isRestored = false;
+    private bool restoreError = false;
+
+    private async Task RecoverData()
+    {
+        try
+        {
+            isRestoring = true;
+            restoreError = false;
+
+            // Make the API call to trigger the restore
+            var response = await Http.PostAsJsonAsync("api/Restore/restore-database", new { });
+
+            if (response.IsSuccessStatusCode)
+            {
+                isRestored = true;
+            }
+            else
+            {
+                restoreError = true;
+            }
+        }
+        catch (Exception)
+        {
+            restoreError = true;
+        }
+        finally
+        {
+            isRestoring = false;
+        }
+    }
+}

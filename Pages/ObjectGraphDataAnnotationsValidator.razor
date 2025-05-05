@@ -1,0 +1,30 @@
+﻿@inherits ComponentBase
+@using System.ComponentModel.DataAnnotations
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    public void Validate(EditContext editContext)
+    {
+        var messages = new ValidationMessageStore(editContext);
+        messages.Clear();
+
+        var validationResults = new List<ValidationResult>();
+        var context = new ValidationContext(editContext.Model);
+        Validator.TryValidateObject(editContext.Model, context, validationResults, validateAllProperties: true);
+
+        foreach (var result in validationResults)
+        {
+            foreach (var member in result.MemberNames)
+            {
+                messages.Add(editContext.Field(member), result.ErrorMessage);
+            }
+        }
+
+        editContext.NotifyValidationStateChanged();
+    }
+}

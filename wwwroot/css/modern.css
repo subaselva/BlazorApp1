@@ -1,0 +1,192 @@
+﻿/* Page container */
+.role-container {
+    max-width: 100%;
+    width: 95%;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    margin-top: 20px;
+}
+
+
+/* Title */
+.title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #444;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* Subtitle */
+.subtitle {
+    font-size: 16px;
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Role List */
+.role-list {
+    list-style-type: none;
+    padding: 0;
+    background: #f9f9f9;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.role-item {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+    .role-item:last-child {
+        border-bottom: none;
+    }
+
+/* Input & Button */
+.form-control {
+    font-size: 14px;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #f9f9f9;
+    margin-bottom: 10px;
+}
+
+/* Primary Button (White background with red text) */
+/* Primary Button (Ash background with white text) */
+.btn-primary {
+    background-color: #b0b0b0; /* Ash (gray) background */
+    color: white; /* White text */
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: block;
+    width: fit-content;
+    padding: 8px 14px;
+    border: 2px solid #b0b0b0; /* Same ash border */
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: white; /* White on hover */
+    color: #b0b0b0; /* Ash text */
+    border: 2px solid #b0b0b0;
+}
+
+/* Danger Button (Darker Ash background with white text) */
+.btn-danger {
+    background-color: #8c8c8c; /* Darker Ash background */
+    color: white; /* White text */
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: block;
+    width: fit-content;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: white; /* White on hover */
+    color: #8c8c8c; /* Ash text */
+    border: 2px solid #8c8c8c;
+}
+.title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #444;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+
+/* Custom Card */
+.custom-card {
+    background: #f4f4f4; /* Light Ash */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+/* Input Styling */
+.custom-input {
+    font-size: 14px;
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    background: #f9f9f9;
+    margin-bottom: 10px;
+}
+
+/* Fetch Button (Ash Theme) */
+.fetch-btn {
+    background-color: #b0b0b0 !important; /* Ash */
+    color: white !important;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border: 2px solid #b0b0b0;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .fetch-btn:hover {
+        background-color: white !important;
+        color: #b0b0b0 !important;
+        border: 2px solid #b0b0b0;
+    }
+.accordion-header {
+    color: black !important;
+}
+/*table*/
+/* Ash & White Theme for Table */
+.table-custom {
+    background-color: #ffe6e6;
+    /* Light ash */
+    color: #333; /* Dark text */
+}
+
+    .table-custom th {
+        background-color: #E65354; /* Dark ash */
+        color: white; /* White text */
+    }
+
+    .table-custom tbody tr:nth-child(odd) {
+        background-color: #e9ecef; /* Light ash for odd rows */
+    }
+
+    .table-custom tbody tr:nth-child(even) {
+        background-color: #ffffff; /* White for even rows */
+    }
+
+    .table-custom .table-danger {
+        background-color: #ffcccc !important; /* Light red for highlights */
+    }
+
+    .table-custom .table-warning {
+        background-color: #ffd699 !important; /* Light yellow */
+    }
+
+    .table-custom .table-info {
+        background-color: #d1ecf1 !important; /* Light blue */
+    }
+
+
