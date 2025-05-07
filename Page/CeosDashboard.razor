@@ -127,27 +127,51 @@ else
     private async Task FetchPendingRequests()
     {
         var response = await Http.GetFromJsonAsync<List<StudentFeeEditRequest>>("api/StudentFees/pending-edits");
+
         if (response != null)
         {
-            pendingRequests = response;
-            originalDataMap.Clear(); // Clear previous data
+            originalDataMap.Clear();
 
-            foreach (var request in pendingRequests)
+            List<StudentFeeEditRequest> validRequests = new();
+
+            foreach (var request in response)
             {
-                await FetchOriginalData(request.RegistrationNumber);
+                try
+                {
+                    var originalData = await Http.GetFromJsonAsync<StudentFee>($"api/StudentFees/{request.RegistrationNumber}");
+                    if (originalData != null)
+                    {
+                        originalDataMap[request.RegistrationNumber] = originalData;
+                        validRequests.Add(request); // Only keep valid ones
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    Console.Error.WriteLine($"[FetchPendingRequests] Original record for Registration #{request.RegistrationNumber} not found or deleted. Error: {ex.Message}");
+                }
+
             }
+
+            pendingRequests = validRequests;
         }
     }
+
 
     private async Task FetchOriginalData(int registrationNumber)
     {
         if (!originalDataMap.ContainsKey(registrationNumber))
         {
-            var originalData = await Http.GetFromJsonAsync<StudentFee>($"api/StudentFees/{registrationNumber}");
-            if (originalData != null)
+            try
             {
-                originalDataMap[registrationNumber] = originalData; // Store in dictionary
+                var originalData = await Http.GetFromJsonAsync<StudentFee>($"api/StudentFees/{registrationNumber}");
+                if (originalData != null)
+                    originalDataMap[registrationNumber] = originalData;
             }
+            catch (HttpRequestException ex)
+            {
+                Console.Error.WriteLine($"Failed to fetch original data for {registrationNumber}: {ex.Message}");
+            }
+
         }
     }
 
