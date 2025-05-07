@@ -17,6 +17,7 @@ else
     <table class="table table-custom table-hover table-bordered">
         <thead class="table-dark">
             <tr>
+                <th>Student ID</th>
                 <th>Admission Number</th>
                 <th>AdmissionDate</th>
                 <th>Class RollNo</th>
@@ -35,6 +36,7 @@ else
             @foreach (var e in PaginatedEnrollments)
             {
                 <tr>
+                    <td>@e.StudentId</td>
                     <td>@e.AdmissionNumber</td>
                     <td>@e.AdmissionDate</td>
                     <td>@e.ClassRollNo</td>

@@ -18,7 +18,8 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-        <nav class="nav flex-column">
+
+       @*  <nav class="nav flex-column">
             <!-- Dropdown Toggle -->
             <div class="nav-item px-3">
                 <a class="nav-link" @onclick="ToggleDropdown" style="cursor: pointer;">
@@ -42,22 +43,45 @@
                     <i class="bi bi-card-checklist me-1"></i> Full Details
                 </NavLink>
             </div>
-        </nav>
+        </nav> *@
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/restore-database">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Recovery
-            </NavLink>
-        </div>
+
         <AuthorizeView Roles="Accountant">
             <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="/fee">
-                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> StudentFeeManagement
+                <!-- Student Fee Management Link -->
+                <div class="nav-item px-3 m-0 p-0">
+                    <NavLink class="nav-link py-1 my-0" href="/fee">
+                        <span class="bi bi-plus-square-fill-nav-menu me-1" aria-hidden="true"></span> StudentFeeManagement
                     </NavLink>
                 </div>
+
+                <!-- Student Management Dropdown -->
+                <nav class="nav flex-column m-0 p-0">
+                    <div class="nav-item px-3 m-0 p-0">
+                        <a class="nav-link py-1 my-0" @onclick="ToggleDropdown" style="cursor: pointer;">
+                            <i class="bi bi-plus-square-fill-nav-menu me-1"></i> Student Management
+                        </a>
+                    </div>
+
+                    <div class="@DropdownCssClass ps-4 pt-1" style="transition: max-height 0.3s ease;">
+                        <NavLink class="nav-link text-white py-1" href="/students-list">
+                            <i class="bi bi-list-ul me-1"></i> Student List
+                        </NavLink>
+                        <NavLink class="nav-link text-white py-1" href="/student-enrollment-list">
+                            <i class="bi bi-plus-square-fill me-1"></i> Enrollment List
+                        </NavLink>
+                        <NavLink class="nav-link text-white py-1" href="/student-profile-list">
+                            <i class="bi bi-person-lines-fill me-1"></i> Profile List
+                        </NavLink>
+                        <NavLink class="nav-link text-white py-1" href="/studentfull">
+                            <i class="bi bi-card-checklist me-1"></i> Full Details
+                        </NavLink>
+                    </div>
+                </nav>
             </Authorized>
         </AuthorizeView>
+
+
 
         <AuthorizeView Roles="CEO">
             <Authorized>
@@ -68,12 +92,12 @@
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="/audit-logs">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>AuditLog
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>AuditLog
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="/roles">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>Role Management
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Role Management
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
@@ -91,6 +115,37 @@
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>Ceo-Dashboard
                     </NavLink>
                 </div>
+                <nav class="nav flex-column m-0 p-0">
+                    <div class="nav-item px-3 m-0 p-0">
+                        <a class="nav-link py-1 my-0 d-flex align-items-center" @onclick="ToggleDropdown" style="cursor: pointer;">
+                            <i class="bi bi-plus-square-fill-nav-menu me-1"></i>
+                            <span>Student Management</span>
+                            <i class="bi @(isDropdownOpen ? "bi-chevron-down" : "bi-chevron-right") ms-auto"></i>
+                        </a>
+                    </div>
+
+
+                    <div class="@DropdownCssClass ps-4 pt-1" style="transition: max-height 0.3s ease;">
+                        <NavLink class="nav-link text-white py-1" href="/students-list">
+                            <i class="bi bi-list-ul me-1"></i> Student List
+                        </NavLink>
+                        <NavLink class="nav-link text-white py-1" href="/student-enrollment-list">
+                            <i class="bi bi-plus-square-fill me-1"></i> Enrollment List
+                        </NavLink>
+                        <NavLink class="nav-link text-white py-1" href="/student-profile-list">
+                            <i class="bi bi-person-lines-fill me-1"></i> Profile List
+                        </NavLink>
+                        <NavLink class="nav-link text-white py-1" href="/studentfull">
+                            <i class="bi bi-card-checklist me-1"></i> Full Details
+                        </NavLink>
+                    </div>
+                </nav>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="/restore-database">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Recovery
+                    </NavLink>
+                </div>
+
             </Authorized>
         </AuthorizeView>
 
