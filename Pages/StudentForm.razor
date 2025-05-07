@@ -2,13 +2,13 @@
 @inject HttpClient Http
 @using BlazorApp1.Model
 @inject NavigationManager Navigation
+
 <h3 class="title">Add Student</h3>
 
 
 
 <EditForm Model="fullStudent.Student" OnValidSubmit="HandleValidSubmit" >
-    <DataAnnotationsValidator />
-    
+    <ObjectGraphDataAnnotationsValidator/>
     <ValidationSummary />
 
     <div class="container-fluid">

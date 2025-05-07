@@ -91,10 +91,12 @@ namespace BlazorApp1.Model
         [Required(ErrorMessage = "Blood group is required.")]
         public string BloodGroup { get; set; }
 
-        [Required]
+        
+        [ValidateComplexType]
         public StudentProfile Profile { get; set; } = new StudentProfile();
 
-        [Required]
+        
+        [ValidateComplexType]
         public EnrollmentDetail Enrollment { get; set; } = new EnrollmentDetail();
 
     }
