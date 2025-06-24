@@ -20,6 +20,7 @@ namespace BlazorApp1.Model
         public string Gender { get; set; }
 
         [Required(ErrorMessage = "Date of birth is required.")]
+        [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
 
         [Required]
